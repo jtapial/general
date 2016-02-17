@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+
+parser = argparse.ArgumentParser(description="This takes one or many PDB IDs and downloads them from the RCSB PDB server")
+
+parser.add_argument("-d", "--destination", help="Folder where the file(s) will be downloaded. Will be created if non-existent. Filename is always 'XXXX.pdb'", default=".")
+parser.add_argument("pdb_ids",nargs="*",metavar="PDB_ID",help="Identifier (four characters) of the PDB entry that will be downloaded. Many IDs can be used")
+
+args = parser.parse_args()
+
+if not args.pdb_ids:
+	print parser.description
+	parser.print_usage()
+	exit()
+
+if not os.path.isdir(args.destination):
+	print "Creating dir: {0}".format(args.destination)
+	os.system("mkdir -p {0}".format(args.destination))
+
+for entry in args.pdb_ids:
+	print "Downloading entry:", entry
+	os.system("wget -q -O - ftp://ftp.wwpdb.org/pub/pdb/data/structures/all/pdb/pdb{0}.ent.gz | gunzip -c > {1}/{0}.pdb".format(entry,args.destination))
+
+
+
+
